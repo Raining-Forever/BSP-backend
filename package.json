@@ -1,0 +1,27 @@
+{
+  "name": "bsp-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Raining-Forever/BSP-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Raining-Forever/BSP-backend/issues"
+  },
+  "homepage": "https://github.com/Raining-Forever/BSP-backend#readme",
+  "dependencies": {
+    "express": "^4.17.2",
+    "nodemon": "^2.0.15",
+    "pg": "^8.7.3",
+    "postgres": "^1.0.2"
+  }
+}
