@@ -109,11 +109,130 @@ const addSymtom = (req, res) => {
 };
 
 // update
+const updateSymtom = (req, res) => {
+  const id = parseInt(req.params.id);
+  const {
+    fever,
+    cough,
+    snot,
+    sore_throat,
+    smell,
+    taste,
+    conjunctivitis,
+    rash,
+    liquid_stool,
+    liquid_stool_frequenly,
+    angina,
+    tired,
+    dizzy,
+    pneumonia,
+    complication,
+    sore_breath,
+    slow_response,
+    unconscious,
+    onset_date,
+    diabetes_obesity,
+    complications,
+    cardiovascular,
+    heart_failure,
+    lung_disease,
+    asthma,
+    chronic_lung,
+    malignant_tumors,
+    cancer,
+    chronic_kidney,
+    ckd34,
+    kidney_failure_transplant,
+    rheumatoid_arthritis,
+    immunosuppressants,
+    chronic_liver,
+    respire_rate,
+    pulse,
+    o2_flowrate,
+  } = req.body;
+
+  // check symtom exist or not
+  pool.query(queries.getSymtomById, [id], (error, results) => {
+    const noSymtomFound = !results.rows.length;
+    if (noSymtomFound) {
+      res.send("Symtom does not exist");
+    }
+    //update process
+    else {
+      pool.query(
+        queries.updateSymtom,
+        [
+          fever,
+          cough,
+          snot,
+          sore_throat,
+          smell,
+          taste,
+          conjunctivitis,
+          rash,
+          liquid_stool,
+          liquid_stool_frequenly,
+          angina,
+          tired,
+          dizzy,
+          pneumonia,
+          complication,
+          sore_breath,
+          slow_response,
+          unconscious,
+          onset_date,
+          diabetes_obesity,
+          complications,
+          cardiovascular,
+          heart_failure,
+          lung_disease,
+          asthma,
+          chronic_lung,
+          malignant_tumors,
+          cancer,
+          chronic_kidney,
+          ckd34,
+          kidney_failure_transplant,
+          rheumatoid_arthritis,
+          immunosuppressants,
+          chronic_liver,
+          respire_rate,
+          pulse,
+          o2_flowrate,
+          id,
+        ],
+        (error, results) => {
+          if (error) throw error;
+          res.status(200).send("Symtom updated successfully.");
+        }
+      );
+    }
+  });
+};
 
 // delete
+const removeSymtom = (req, res) => {
+  const id = parseInt(req.params.id);
+
+  // check that symtom exist or not
+  pool.query(queries.getSymtomById, [id], (error, results) => {
+    const noSymtomFound = !results.rows.length;
+    if (noSymtomFound) {
+      res.send("Symtom does not exist");
+    } else {
+      // remove process
+      pool.query(queries.removeSymtom, [id], (error, results) => {
+        if (error) throw error;
+        res.status(200).send("Symtom remove successfully.");
+      });
+    }
+  });
+};
 
 module.exports = {
   getSymtoms,
   getSymtomById,
   addSymtom,
+  updateSymtom,
+  removeSymtom,
 };

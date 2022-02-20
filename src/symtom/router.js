@@ -6,7 +6,7 @@ const router = Router();
 router.get("/", controller.getSymtoms);
 router.post("/", controller.addSymtom);
 router.get("/:id", controller.getSymtomById);
-router.put("/:id", controller.getSymtoms);
-router.delete("/:id", controller.getSymtoms);
+router.put("/:id", controller.updateSymtom);
+router.delete("/:id", controller.removeSymtom);
 
 module.exports = router;
