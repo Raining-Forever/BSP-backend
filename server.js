@@ -1,5 +1,5 @@
 const express = require("express");
-const userRoutes = require("./src/user/router");
+const userRoutes = require("./src/user_info/router");
 const symtomRoutes = require("./src/symtom/router");
 
 const app = express();
