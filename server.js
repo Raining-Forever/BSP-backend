@@ -3,7 +3,7 @@ const userRoutes = require("./src/user_info/router");
 const symtomRoutes = require("./src/symtom/router");
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
