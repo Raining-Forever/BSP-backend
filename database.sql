@@ -1,17 +1,6 @@
-CREATE DATABASE test;
-
-CREATE TABLE student (
-    id SERIAL PRIMARY KEY,
-    firstname TEXT,
-    lastname TEXT,
-    age INT NOT NULL,
-    address VARCHAR(255),
-    email VARCHAR(50)
-);
-
 CREATE DATABASE bsp;
 
-CREATE TABLE users (
+CREATE TABLE user_info (
     id SERIAL PRIMARY KEY,
     idcard TEXT,
     title TEXT,
