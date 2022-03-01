@@ -24,6 +24,7 @@ CREATE TABLE user_info (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+insert into user_info (idcard, firstname) values ('12345', 'test1');
 
 CREATE TABLE symtom (
     id SERIAL PRIMARY KEY,
@@ -67,3 +68,4 @@ CREATE TABLE symtom (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+insert into symtom (fever, cough) values (false, false);
