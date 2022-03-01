@@ -15,5 +15,5 @@ app.use("/api/users", userRoutes);
 app.use("/api/symtom", symtomRoutes);
 
 app.listen(PORT, () => {
-  console.log("app listening on port ${PORT}");
+  console.log(`app listening on port ${PORT}`);
 });
