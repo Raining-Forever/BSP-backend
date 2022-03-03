@@ -2,10 +2,13 @@ const express = require("express");
 const userRoutes = require("./src/user_info/router");
 const symtomRoutes = require("./src/symtom/router");
 
+const cors = require("cors");
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
+app.use(cors())
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

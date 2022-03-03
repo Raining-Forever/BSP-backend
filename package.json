@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon server",
-    "start":"node server.js"
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/Raining-Forever/BSP-backend#readme",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.17.2",
     "nodemon": "^2.0.15",
     "pg": "^8.7.3",
@@ -27,6 +28,6 @@
   },
   "engines": {
     "node": "16.14.0",
-    "npm" : "7.20.6"
+    "npm": "7.20.6"
   }
 }
