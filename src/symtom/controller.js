@@ -58,54 +58,64 @@ const addSymtom = (req, res) => {
     respire_rate, //35
     pulse,
     o2_flowrate, //37
+    patient_id,
   } = req.body;
 
-  pool.query(
-    queries.addSymtom,
-    [
-      fever,
-      cough,
-      snot,
-      sore_throat,
-      smell, //5
-      taste,
-      conjunctivitis,
-      rash,
-      liquid_stool,
-      liquid_stool_frequenly, //10
-      angina,
-      tired,
-      dizzy,
-      pneumonia,
-      complication, //15
-      sore_breath,
-      slow_response,
-      unconscious,
-      onset_date,
-      diabetes_obesity, //20
-      complications,
-      cardiovascular,
-      heart_failure,
-      lung_disease,
-      asthma, //25
-      chronic_lung,
-      malignant_tumors,
-      cancer,
-      chronic_kidney,
-      ckd34, //30
-      kidney_failure_transplant,
-      rheumatoid_arthritis,
-      immunosuppressants,
-      chronic_liver,
-      respire_rate, //35
-      pulse,
-      o2_flowrate, //37
-    ],
-    (error, results) => {
-      if (error) throw error;
-      res.status(201).send("Symtom created successfully.");
+  // check symtom already created or not
+  pool.query(queries.getSymtomById, [patient_id], (error, results) => {
+    const symtomFound = results.rows.length;
+    if (symtomFound) {
+      res.send("Symtom already exist");
+    } else {
+      pool.query(
+        queries.addSymtom,
+        [
+          fever,
+          cough,
+          snot,
+          sore_throat,
+          smell, //5
+          taste,
+          conjunctivitis,
+          rash,
+          liquid_stool,
+          liquid_stool_frequenly, //10
+          angina,
+          tired,
+          dizzy,
+          pneumonia,
+          complication, //15
+          sore_breath,
+          slow_response,
+          unconscious,
+          onset_date,
+          diabetes_obesity, //20
+          complications,
+          cardiovascular,
+          heart_failure,
+          lung_disease,
+          asthma, //25
+          chronic_lung,
+          malignant_tumors,
+          cancer,
+          chronic_kidney,
+          ckd34, //30
+          kidney_failure_transplant,
+          rheumatoid_arthritis,
+          immunosuppressants,
+          chronic_liver,
+          respire_rate, //35
+          pulse,
+          o2_flowrate, //37
+          patient_id,
+        ],
+        (error, results) => {
+          if (error) throw error;
+          res.status(201).send("Symtom created successfully.");
+        }
+      );
     }
-  );
+  });
 };
 
 // update
