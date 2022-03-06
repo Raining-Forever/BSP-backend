@@ -1,4 +1,3 @@
-const { is } = require("express/lib/request");
 const pool = require("../../db");
 const queries = require("./queries");
 
