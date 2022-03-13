@@ -91,7 +91,7 @@ insert into users (email, is_admin) values ('test@gmail.com', false);
 
 CREATE TABLE patients (
     id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users,
+    user_id INT REFERENCES users ON DELETE CASCADE,
     email TEXT,
     idcard TEXT,
     title TEXT,
@@ -118,7 +118,7 @@ insert into patients (user_id, firstname) values (1, 'test1');
 
 CREATE TABLE doctors (
     id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users,
+    user_id INT REFERENCES users ON DELETE CASCADE,
     licenseNumber TEXT,
     email TEXT,
     title TEXT,
@@ -139,7 +139,7 @@ insert into doctors (user_id, firstname) values (2, 'testdoctor1');
 
 CREATE TABLE hospitals (
     id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users,
+    user_id INT REFERENCES users ON DELETE CASCADE,
     hospital_name TEXT,
     hospital_number TEXT,
     bed_total INT,
@@ -156,7 +156,7 @@ CREATE TABLE hospitals (
 insert into hospitals (user_id, hospital_name) values (3, 'testhospital1');
 
 CREATE TABLE symtom (
-    patient_id INT PRIMARY KEY REFERENCES patients,
+    patient_id INT PRIMARY KEY REFERENCES patients ON DELETE CASCADE,
     fever BOOLEAN,
     cough BOOLEAN,
     snot BOOLEAN,
@@ -197,7 +197,7 @@ CREATE TABLE symtom (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
-insert into symtom (patient_id, fever, cough) values (2, true, true);
+insert into symtom (patient_id, fever, cough) values (1, true, true);
 
 CREATE TABLE appointments(
     id SERIAL PRIMARY KEY,
@@ -216,7 +216,7 @@ CREATE TABLE patient_doctor_appointment(
     appointment_id INT REFERENCES appointments,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW(),
-    PRIMARY KEY (patient_id, doctor_id)
+    PRIMARY KEY (patient_id, doctor_id) ON DELETE CASCADE
 );
 insert into patient_doctor_appointment (patient_id, doctor_id, appointment_id) values (1, 1, 1);
 
@@ -236,6 +236,6 @@ CREATE TABLE patient_hospital_reservation(
     reservation_id INT REFERENCES reservation,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW(),
-    PRIMARY KEY (patient_id, hospital_id)
+    PRIMARY KEY (patient_id, hospital_id) ON DELETE CASCADE
 );
 insert into patient_hospital_reservation (patient_id, hospital_id, reservation_id) values (1, 1, 1);
