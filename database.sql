@@ -211,12 +211,12 @@ CREATE TABLE appointments(
 insert into appointments (url, status) values ('link.eiei', 1);
 
 CREATE TABLE patient_doctor_appointment(
+    id SERIAL PRIMARY KEY,
     patient_id INT,
     doctor_id INT,
     appointment_id INT REFERENCES appointments,
     created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW(),
-    PRIMARY KEY (patient_id, doctor_id) ON DELETE CASCADE
+    updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 insert into patient_doctor_appointment (patient_id, doctor_id, appointment_id) values (1, 1, 1);
 
@@ -231,11 +231,11 @@ CREATE TABLE reservation(
 insert into reservation (status) values (1);
 
 CREATE TABLE patient_hospital_reservation(
+    id SERIAL PRIMARY KEY,
     patient_id INT,
     hospital_id INT,
     reservation_id INT REFERENCES reservation,
     created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW(),
-    PRIMARY KEY (patient_id, hospital_id) ON DELETE CASCADE
+    updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 insert into patient_hospital_reservation (patient_id, hospital_id, reservation_id) values (1, 1, 1);

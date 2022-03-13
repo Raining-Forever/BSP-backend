@@ -41,7 +41,7 @@ const updatePDA = (req, res) => {
     } else {
       pool.query(
         queries.updatePDA,
-        [patient_id, doctor_id, appointment_id],
+        [patient_id, doctor_id, appointment_id, id],
         (error, results) => {
           if (error) throw error;
           res.status(200).send("PDA updated successfully.");

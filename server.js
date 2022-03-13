@@ -7,6 +7,7 @@ const hospitalRoutes = require("./src/hospital/router");
 const appointmentRoutes = require("./src/appointment/router");
 const reservationRoutes = require("./src/reservation/router");
 const pdaRoutes = require("./src/patient_doctor_appointment/router");
+const phrRoutes = require("./src/patient_hospital_reservation/router");
 
 const cors = require("cors");
 
@@ -28,6 +29,7 @@ app.use("/api/hospital", hospitalRoutes);
 app.use("/api/appointment", appointmentRoutes);
 app.use("/api/reservation", reservationRoutes);
 app.use("/api/pda", pdaRoutes);
+app.use("/api/phr", phrRoutes);
 
 app.listen(PORT, () => {
   console.log(`app listening on port ${PORT}`);
