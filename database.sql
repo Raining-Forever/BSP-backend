@@ -135,7 +135,7 @@ CREATE TABLE doctors (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
-insert into doctors (user_id, firstname) values (2, 'testdoctor1');
+insert into doctors (user_id, firstname) values (1, 'testdoctor1');
 
 CREATE TABLE hospitals (
     id SERIAL PRIMARY KEY,
@@ -153,7 +153,7 @@ CREATE TABLE hospitals (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
-insert into hospitals (user_id, hospital_name) values (3, 'testhospital1');
+insert into hospitals (user_id, hospital_name) values (1, 'testhospital1');
 
 CREATE TABLE symtom (
     patient_id INT PRIMARY KEY REFERENCES patients ON DELETE CASCADE,
