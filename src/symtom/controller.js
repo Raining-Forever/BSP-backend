@@ -18,6 +18,14 @@ const getSymtomById = (req, res) => {
   });
 };
 
+const getPatientById = (req, res, patient_id) => {
+  // check patient exist or not
+  pool.query(queries.getPatientById, [patient_id], (error, results) => {
+    const patientNotFound = !results.rows.length;
+    return patientNotFound;
+  });
+};
+
 // add
 const addSymtom = (req, res) => {
   const {
