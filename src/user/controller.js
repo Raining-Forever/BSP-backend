@@ -17,23 +17,23 @@ const getUserById = (req, res) => {
   });
 };
 
-const addUser = (req, res) => {
-  const { email, is_admin } = req.body;
+const login = async (req, res) => {
+  const { email } = req.body;
 
   // check email exists
+  const existUser = await pool.query(queries.checkEmailExists, [email]);
 
-  pool.query(queries.checkEmailExists, [email], (error, results) => {
-    if (error) throw error;
-    if (results.rows.length) {
-      res.send("Email already exists.");
-    }
-    // add user
-    else
-      pool.query(queries.addUser, [email, is_admin], (error, results) => {
-        if (error) throw error;
-        res.status(201).send("User created successfully.");
-      });
-  });
+  // no exist user = register
+  if (existUser.rowCount === 0) {
+    const addNewUser = await pool.query(queries.addUser, [email, false]);
+    res
+      .status(201)
+      .json({ loggedIn: true, email, user_id: addNewUser.rows[0].id });
+  }
+  // already exist >> login
+  else {
+    res.json({ loggedIn: true, email, user_id: existUser.rows[0].id });
+  }
 };
 
 const removeUser = (req, res) => {
@@ -80,7 +80,7 @@ const updateUser = (req, res) => {
 module.exports = {
   getUsers,
   getUserById,
-  addUser,
+  login,
   removeUser,
   updateUser,
 };
