@@ -48,7 +48,7 @@ const addHospital = (req, res) => {
     ],
     (error, results) => {
       if (error) throw error;
-      res.status(201).send("Hospital created successfully.");
+      res.status(201).json({ msg: "Hospital created successfully." });
     }
   );
 };
@@ -60,12 +60,12 @@ const removeHospital = (req, res) => {
   pool.query(queries.getHospitalById, [id], (error, results) => {
     const noHospitalFound = !results.rows.length;
     if (noHospitalFound) {
-      res.send("Hospital does not exist");
+      res.json({ msg: "Hospital does not exist" });
     } else {
       // remove process
       pool.query(queries.removeHospital, [id], (error, results) => {
         if (error) throw error;
-        res.status(200).send("Hospital remove successfully.");
+        res.status(200).json({ msg: "Hospital remove successfully." });
       });
     }
   });
@@ -92,7 +92,7 @@ const updateHospital = (req, res) => {
   pool.query(queries.getHospitalById, [id], (error, results) => {
     const noHospitalFound = !results.rows.length;
     if (noHospitalFound) {
-      res.send("Hospital does not exist");
+      res.json({ msg: "Hospital does not exist" });
     } else {
       pool.query(
         queries.updateHospital,
@@ -112,7 +112,7 @@ const updateHospital = (req, res) => {
         ],
         (error, results) => {
           if (error) throw error;
-          res.status(200).send("Hospital updated successfully.");
+          res.status(200).json({ msg: "Hospital updated successfully." });
         }
       );
     }

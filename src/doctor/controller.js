@@ -54,7 +54,7 @@ const addDoctor = (req, res) => {
     ],
     (error, results) => {
       if (error) throw error;
-      res.status(201).send("Patient created successfully.");
+      res.status(201).json({ msg: "Doctor created successfully." });
     }
   );
 };
@@ -66,12 +66,12 @@ const removeDoctor = (req, res) => {
   pool.query(queries.getDoctorById, [id], (error, results) => {
     const noDoctorFound = !results.rows.length;
     if (noDoctorFound) {
-      res.send("Doctor does not exist");
+      res.json({ msg: "Doctor does not exist" });
     } else {
       // remove process
       pool.query(queries.removeDoctor, [id], (error, results) => {
         if (error) throw error;
-        res.status(200).send("Doctor remove successfully.");
+        res.status(200).json({ msg: "Doctor remove successfully." });
       });
     }
   });
@@ -101,7 +101,7 @@ const updateDoctor = (req, res) => {
   pool.query(queries.getDoctorById, [id], (error, results) => {
     const noDoctorFound = !results.rows.length;
     if (noDoctorFound) {
-      res.send("Doctor does not exist");
+      res.json({ msg: "Doctor does not exist" });
     } else {
       pool.query(
         queries.updateDoctor,
@@ -124,7 +124,7 @@ const updateDoctor = (req, res) => {
         ],
         (error, results) => {
           if (error) throw error;
-          res.status(200).send("Doctor updated successfully.");
+          res.status(200).json({ msg: "Doctor updated successfully." });
         }
       );
     }

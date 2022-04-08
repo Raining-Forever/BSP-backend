@@ -24,7 +24,7 @@ const addAppointment = (req, res) => {
     [startTime, endTime, url, status],
     (error, results) => {
       if (error) throw error;
-      res.status(201).send("Appointment created successfully.");
+      res.status(201).json({ msg: "Appointment created successfully." });
     }
   );
 };
@@ -37,14 +37,14 @@ const updateAppointment = (req, res) => {
   pool.query(queries.getAppointmentById, [id], (error, results) => {
     const noAppointmentFound = !results.rows.length;
     if (noAppointmentFound) {
-      res.send("Appointment does not exist");
+      res.json({ msg: "Appointment does not exist" });
     } else {
       pool.query(
         queries.updateAppointment,
         [startTime, endTime, url, status, id],
         (error, results) => {
           if (error) throw error;
-          res.status(200).send("Appointment updated successfully.");
+          res.status(200).json({ msg: "Appointment updated successfully." });
         }
       );
     }
@@ -58,12 +58,12 @@ const removeAppointment = (req, res) => {
   pool.query(queries.getAppointmentById, [id], (error, results) => {
     const noAppointmentFound = !results.rows.length;
     if (noAppointmentFound) {
-      res.send("Appointment does not exist");
+      res.json({ msg: "Appointment does not exist" });
     } else {
       // remove process
       pool.query(queries.removeAppointment, [id], (error, results) => {
         if (error) throw error;
-        res.status(200).send("Appointment remove successfully.");
+        res.status(200).json({ msg: "Appointment remove successfully." });
       });
     }
   });

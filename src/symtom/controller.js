@@ -18,13 +18,13 @@ const getSymtomById = (req, res) => {
   });
 };
 
-const getPatientById = (req, res, patient_id) => {
-  // check patient exist or not
-  pool.query(queries.getPatientById, [patient_id], (error, results) => {
-    const patientNotFound = !results.rows.length;
-    return patientNotFound;
-  });
-};
+// const getPatientById = (req, res, patient_id) => {
+//   // check patient exist or not
+//   pool.query(queries.getPatientById, [patient_id], (error, results) => {
+//     const patientNotFound = !results.rows.length;
+//     return patientNotFound;
+//   });
+// };
 
 // add
 const addSymtom = (req, res) => {
@@ -73,7 +73,7 @@ const addSymtom = (req, res) => {
   pool.query(queries.getSymtomById, [patient_id], (error, results) => {
     const symtomFound = results.rows.length;
     if (symtomFound) {
-      res.send("Symtom already exist");
+      res.json({ msg: "Symtom already exist" });
     } else {
       pool.query(
         queries.addSymtom,
@@ -119,7 +119,7 @@ const addSymtom = (req, res) => {
         ],
         (error, results) => {
           if (error) throw error;
-          res.status(201).send("Symtom created successfully.");
+          res.status(201).json({ msg: "Symtom created successfully." });
         }
       );
     }
@@ -173,7 +173,7 @@ const updateSymtom = (req, res) => {
   pool.query(queries.getSymtomById, [id], (error, results) => {
     const noSymtomFound = !results.rows.length;
     if (noSymtomFound) {
-      res.send("Symtom does not exist");
+      res.json({ msg: "Symtom does not exist" });
     }
     //update process
     else {
@@ -221,7 +221,7 @@ const updateSymtom = (req, res) => {
         ],
         (error, results) => {
           if (error) throw error;
-          res.status(200).send("Symtom updated successfully.");
+          res.status(200).json({ msg: "Symtom updated successfully." });
         }
       );
     }
@@ -236,12 +236,12 @@ const removeSymtom = (req, res) => {
   pool.query(queries.getSymtomById, [id], (error, results) => {
     const noSymtomFound = !results.rows.length;
     if (noSymtomFound) {
-      res.send("Symtom does not exist");
+      res.json({ msg: "Symtom does not exist" });
     } else {
       // remove process
       pool.query(queries.removeSymtom, [id], (error, results) => {
         if (error) throw error;
-        res.status(200).send("Symtom remove successfully.");
+        res.status(200).json({ msg: "Symtom remove successfully." });
       });
     }
   });
