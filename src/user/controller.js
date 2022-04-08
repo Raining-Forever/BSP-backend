@@ -17,23 +17,82 @@ const getUserById = (req, res) => {
   });
 };
 
-const addUser = (req, res) => {
-  const { email, is_admin } = req.body;
+const login = async (req, res) => {
+  const { email } = req.body;
 
   // check email exists
+  const existUser = await pool.query(queries.checkEmailExists, [email]);
 
-  pool.query(queries.checkEmailExists, [email], (error, results) => {
-    if (error) throw error;
-    if (results.rows.length) {
-      res.send("Email already exists.");
-    }
-    // add user
-    else
-      pool.query(queries.addUser, [email, is_admin], (error, results) => {
-        if (error) throw error;
-        res.status(201).send("User created successfully.");
+  // no exist user = register
+  if (existUser.rowCount === 0) {
+    const addNewUser = await pool.query(queries.addUser, [email, false]);
+    res.status(201).json({
+      loggedIn: true,
+      email,
+      role: "none",
+      user_id: addNewUser.rows[0].id,
+    });
+  }
+  // already exist >> login
+  else {
+    // get role
+    const patient = await pool.query(
+      "select * from patients where user_id = $1",
+      [existUser.rows[0].id]
+    );
+    // if this is patient
+    if (patient.rowCount > 0) {
+      res.json({
+        loggedIn: true,
+        email,
+        user_id: existUser.rows[0].id,
+        role: "patient",
+        user_info: patient.rows[0],
       });
-  });
+    }
+    // if not patient
+    else {
+      // check if doctor
+      const doctor = await pool.query(
+        "select * from doctors where user_id = $1",
+        [existUser.rows[0].id]
+      );
+      if (doctor.rowCount > 0) {
+        res.json({
+          loggedIn: true,
+          email,
+          user_id: existUser.rows[0].id,
+          role: "doctor",
+          user_info: doctor.rows[0],
+        });
+      }
+      // check for hospital
+      else {
+        const hospital = await pool.query(
+          "select * from hospitals where user_id = $1",
+          [existUser.rows[0].id]
+        );
+        if (hospital.rowCount > 0) {
+          res.json({
+            loggedIn: true,
+            email,
+            user_id: existUser.rows[0].id,
+            role: "hospital",
+            user_info: hospital.rows[0],
+          });
+        }
+        // not all of above >> not register yet
+        else {
+          res.json({
+            loggedIn: true,
+            email,
+            user_id: existUser.rows[0].id,
+            role: "none",
+          });
+        }
+      }
+    }
+  }
 };
 
 const removeUser = (req, res) => {
@@ -80,7 +139,7 @@ const updateUser = (req, res) => {
 module.exports = {
   getUsers,
   getUserById,
-  addUser,
+  login,
   removeUser,
   updateUser,
 };
