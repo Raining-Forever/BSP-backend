@@ -1,3 +1,4 @@
+const { json } = require("express/lib/response");
 const pool = require("../../db");
 const queries = require("./queries");
 
@@ -40,52 +41,57 @@ const addPatient = async (req, res) => {
     postalCode, //20
   } = req.body;
 
-  // check user already exist
-  const checkEmailExists = await pool.query(
-    "select email from patients where email = $1",
-    [email]
-  );
-  if (checkEmailExists.rowCount > 0) {
-    res.json({
-      msg: "Email already registered",
-    });
-  } else
-    await pool.query(
-      queries.addPatient,
-      [
-        user_id,
-        email,
-        idcard,
-        title,
-        firstname,
-        lastname,
-        birthday,
-        tel,
-        weight,
-        height,
-        gender,
-        is_covid_test,
-        proof_type,
-        is_detected,
-        proof_url,
-        address,
-        province,
-        district,
-        subDistrict,
-        postalCode,
-      ],
-      (error, results) => {
-        if (error) throw error;
-        console.log(results.rows);
-        res.status(201).json({
-          loggedIn: true,
-          email,
-          role: "patient",
-          user_id: results.user_id,
-          user_info: results.rows,
-        });
-      }
+  //check user id
+  if (!user_id) {
+    res.json({ msg: "no user_id" });
+  } else {
+    // check user already exist
+    const checkEmailExists = await pool.query(
+      "select email from patients where email = $1",
+      [email]
     );
+    if (checkEmailExists.rowCount > 0) {
+      res.json({
+        msg: "Email already registered",
+      });
+    } else
+      await pool.query(
+        queries.addPatient,
+        [
+          user_id,
+          email,
+          idcard,
+          title,
+          firstname,
+          lastname,
+          birthday,
+          tel,
+          weight,
+          height,
+          gender,
+          is_covid_test,
+          proof_type,
+          is_detected,
+          proof_url,
+          address,
+          province,
+          district,
+          subDistrict,
+          postalCode,
+        ],
+        (error, results) => {
+          if (error) throw error;
+          console.log(results.rows);
+          res.status(201).json({
+            loggedIn: true,
+            email,
+            role: "patient",
+            user_id: results.user_id,
+            user_info: results.rows[0],
+          });
+        }
+      );
+  }
 };
 
 const removePatient = async (req, res) => {
