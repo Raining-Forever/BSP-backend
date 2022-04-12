@@ -31,6 +31,7 @@ const login = async (req, res) => {
       email,
       role: "none",
       user_id: addNewUser.rows[0].id,
+      user_info: "none",
     });
   }
   // already exist >> login
@@ -88,6 +89,7 @@ const login = async (req, res) => {
             email,
             user_id: existUser.rows[0].id,
             role: "none",
+            user_info: "none",
           });
         }
       }

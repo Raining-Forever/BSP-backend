@@ -47,27 +47,29 @@ const addSymtom = (req, res) => {
     sore_breath,
     slow_response,
     unconscious,
-    onset_date,
-    diabetes_obesity, //20
+    onset_date, //ส่วนที่ 1 จบ
+    diabetes_obesity, //20 เริ่ม 2
     complications,
-    cardiovascular,
+    cardiovascular, //โรคหัวใจและหลอดเลือด
     heart_failure,
-    lung_disease,
+    lung_disease, // โรคปอด
     asthma, //25
     chronic_lung,
-    malignant_tumors,
+    malignant_tumors, // เนื้องอก
     cancer,
-    chronic_kidney,
+    chronic_kidney, // โรคไตเรื้อรัง
     ckd34, //30
     kidney_failure_transplant,
     rheumatoid_arthritis,
     immunosuppressants,
-    chronic_liver,
+    chronic_liver, // จบ 2
     respire_rate, //35
     pulse,
     o2_flowrate, //37
     patient_id,
   } = req.body;
+  // const { patient_id, result } = req.body;
+  // console.log(result);
 
   // check symtom already created or not
   pool.query(queries.getSymtomById, [patient_id], (error, results) => {

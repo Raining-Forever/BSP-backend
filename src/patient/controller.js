@@ -16,7 +16,7 @@ const getPatientById = (req, res) => {
   });
 };
 
-const addPatient = (req, res) => {
+const addPatient = async (req, res) => {
   const {
     user_id,
     email,
@@ -39,42 +39,60 @@ const addPatient = (req, res) => {
     subDistrict,
     postalCode, //20
   } = req.body;
-  pool.query(
-    queries.addPatient,
-    [
-      user_id,
-      email,
-      idcard,
-      title,
-      firstname,
-      lastname,
-      birthday,
-      tel,
-      weight,
-      height,
-      gender,
-      is_covid_test,
-      proof_type,
-      is_detected,
-      proof_url,
-      address,
-      province,
-      district,
-      subDistrict,
-      postalCode,
-    ],
-    (error, results) => {
-      if (error) throw error;
-      res.status(201).json({ msg: "Patient created successfully." });
-    }
+
+  // check user already exist
+  const checkEmailExists = await pool.query(
+    "select email from patients where email = $1",
+    [email]
   );
+  if (checkEmailExists.rowCount > 0) {
+    res.json({
+      msg: "Email already registered",
+    });
+  } else
+    await pool.query(
+      queries.addPatient,
+      [
+        user_id,
+        email,
+        idcard,
+        title,
+        firstname,
+        lastname,
+        birthday,
+        tel,
+        weight,
+        height,
+        gender,
+        is_covid_test,
+        proof_type,
+        is_detected,
+        proof_url,
+        address,
+        province,
+        district,
+        subDistrict,
+        postalCode,
+      ],
+      (error, results) => {
+        if (error) throw error;
+        console.log(results.rows);
+        res.status(201).json({
+          loggedIn: true,
+          email,
+          role: "patient",
+          user_id: results.user_id,
+          user_info: results.rows,
+        });
+      }
+    );
 };
 
-const removePatient = (req, res) => {
+const removePatient = async (req, res) => {
   const id = parseInt(req.params.id);
 
   // check that symtom exist or not
-  pool.query(queries.getPatientById, [id], (error, results) => {
+  await pool.query(queries.getPatientById, [id], (error, results) => {
     const noPatientFound = !results.rows.length;
     if (noPatientFound) {
       res.json({ msg: "Patient does not exist" });
