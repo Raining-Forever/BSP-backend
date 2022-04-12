@@ -31,6 +31,7 @@ const login = async (req, res) => {
       email,
       role: "none",
       user_id: addNewUser.rows[0].id,
+      user_info: "none",
     });
   }
   // already exist >> login
@@ -88,6 +89,7 @@ const login = async (req, res) => {
             email,
             user_id: existUser.rows[0].id,
             role: "none",
+            user_info: "none",
           });
         }
       }
@@ -103,13 +105,13 @@ const removeUser = (req, res) => {
     const noUserFound = !results.rows.length;
     // user not exist
     if (noUserFound) {
-      res.send("User does not exist.");
+      res.json({ msg: "User does not exist." });
     }
     // user exist > ready to delete
     else
       pool.query(queries.removeUser, [id], (error, results) => {
         if (error) throw error;
-        res.status(200).send("User remove successfully.");
+        res.status(200).json({ msg: "User remove successfully." });
       });
   });
 };
@@ -123,14 +125,14 @@ const updateUser = (req, res) => {
     const noUserFound = !results.rows.length;
     // user not exist
     if (noUserFound) {
-      res.send("User does not exist.");
+      res.json({ msg: "User does not exist." });
     } else
       pool.query(
         queries.updateUser,
         [email, is_admin, id],
         (error, results) => {
           if (error) throw error;
-          res.status(200).send("User updated successfully.");
+          res.status(200).json({ msg: "User updated successfully." });
         }
       );
   });

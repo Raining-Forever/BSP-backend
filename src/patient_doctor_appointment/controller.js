@@ -24,7 +24,7 @@ const addPDA = (req, res) => {
     [patient_id, doctor_id, appointment_id],
     (error, results) => {
       if (error) throw error;
-      res.status(201).send("PDA created successfully.");
+      res.status(201).json({ msg: "PDA created successfully." });
     }
   );
 };
@@ -37,14 +37,14 @@ const updatePDA = (req, res) => {
   pool.query(queries.getPDAById, [id], (error, results) => {
     const noPDAFound = !results.rows.length;
     if (noPDAFound) {
-      res.send("PDA does not exist");
+      res.json({ msg: "PDA does not exist" });
     } else {
       pool.query(
         queries.updatePDA,
         [patient_id, doctor_id, appointment_id, id],
         (error, results) => {
           if (error) throw error;
-          res.status(200).send("PDA updated successfully.");
+          res.status(200).json({ msg: "PDA updated successfully." });
         }
       );
     }
@@ -58,12 +58,12 @@ const removePDA = (req, res) => {
   pool.query(queries.getPDAById, [id], (error, results) => {
     const noPDAFound = !results.rows.length;
     if (noPDAFound) {
-      res.send("PDA does not exist");
+      res.json({ msg: "PDA does not exist" });
     } else {
       // remove process
       pool.query(queries.removePDA, [id], (error, results) => {
         if (error) throw error;
-        res.status(200).send("PDA remove successfully.");
+        res.status(200).json({ msg: "PDA remove successfully." });
       });
     }
   });

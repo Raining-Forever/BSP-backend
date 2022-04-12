@@ -24,7 +24,7 @@ const addReservation = (req, res) => {
     [status, checkIn, checkOut],
     (error, results) => {
       if (error) throw error;
-      res.status(201).send("Reservation created successfully.");
+      res.status(201).json({ msg: "Reservation created successfully." });
     }
   );
 };
@@ -37,14 +37,14 @@ const updateReservation = (req, res) => {
   pool.query(queries.getReservationById, [id], (error, results) => {
     const noReservationFound = !results.rows.length;
     if (noReservationFound) {
-      res.send("Reservation does not exist");
+      res.json({ msg: "Reservation does not exist" });
     } else {
       pool.query(
         queries.updateReservation,
         [status, checkIn, checkOut, id],
         (error, results) => {
           if (error) throw error;
-          res.status(200).send("Reservation updated successfully.");
+          res.status(200).json({ msg: "Reservation updated successfully." });
         }
       );
     }
@@ -58,12 +58,12 @@ const removeReservation = (req, res) => {
   pool.query(queries.getReservationById, [id], (error, results) => {
     const noReservationFound = !results.rows.length;
     if (noReservationFound) {
-      res.send("Reservation does not exist");
+      res.json({ msg: "Reservation does not exist" });
     } else {
       // remove process
       pool.query(queries.removeReservation, [id], (error, results) => {
         if (error) throw error;
-        res.status(200).send("Reservation remove successfully.");
+        res.status(200).json({ msg: "Reservation remove successfully." });
       });
     }
   });

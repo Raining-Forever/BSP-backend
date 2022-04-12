@@ -18,13 +18,13 @@ const getSymtomById = (req, res) => {
   });
 };
 
-const getPatientById = (req, res, patient_id) => {
-  // check patient exist or not
-  pool.query(queries.getPatientById, [patient_id], (error, results) => {
-    const patientNotFound = !results.rows.length;
-    return patientNotFound;
-  });
-};
+// const getPatientById = (req, res, patient_id) => {
+//   // check patient exist or not
+//   pool.query(queries.getPatientById, [patient_id], (error, results) => {
+//     const patientNotFound = !results.rows.length;
+//     return patientNotFound;
+//   });
+// };
 
 // add
 const addSymtom = (req, res) => {
@@ -47,33 +47,35 @@ const addSymtom = (req, res) => {
     sore_breath,
     slow_response,
     unconscious,
-    onset_date,
-    diabetes_obesity, //20
+    onset_date, //ส่วนที่ 1 จบ
+    diabetes_obesity, //20 เริ่ม 2
     complications,
-    cardiovascular,
+    cardiovascular, //โรคหัวใจและหลอดเลือด
     heart_failure,
-    lung_disease,
+    lung_disease, // โรคปอด
     asthma, //25
     chronic_lung,
-    malignant_tumors,
+    malignant_tumors, // เนื้องอก
     cancer,
-    chronic_kidney,
+    chronic_kidney, // โรคไตเรื้อรัง
     ckd34, //30
     kidney_failure_transplant,
     rheumatoid_arthritis,
     immunosuppressants,
-    chronic_liver,
+    chronic_liver, // จบ 2
     respire_rate, //35
     pulse,
     o2_flowrate, //37
     patient_id,
   } = req.body;
+  // const { patient_id, result } = req.body;
+  // console.log(result);
 
   // check symtom already created or not
   pool.query(queries.getSymtomById, [patient_id], (error, results) => {
     const symtomFound = results.rows.length;
     if (symtomFound) {
-      res.send("Symtom already exist");
+      res.json({ msg: "Symtom already exist" });
     } else {
       pool.query(
         queries.addSymtom,
@@ -119,7 +121,7 @@ const addSymtom = (req, res) => {
         ],
         (error, results) => {
           if (error) throw error;
-          res.status(201).send("Symtom created successfully.");
+          res.status(201).json({ msg: "Symtom created successfully." });
         }
       );
     }
@@ -173,7 +175,7 @@ const updateSymtom = (req, res) => {
   pool.query(queries.getSymtomById, [id], (error, results) => {
     const noSymtomFound = !results.rows.length;
     if (noSymtomFound) {
-      res.send("Symtom does not exist");
+      res.json({ msg: "Symtom does not exist" });
     }
     //update process
     else {
@@ -221,7 +223,7 @@ const updateSymtom = (req, res) => {
         ],
         (error, results) => {
           if (error) throw error;
-          res.status(200).send("Symtom updated successfully.");
+          res.status(200).json({ msg: "Symtom updated successfully." });
         }
       );
     }
@@ -236,12 +238,12 @@ const removeSymtom = (req, res) => {
   pool.query(queries.getSymtomById, [id], (error, results) => {
     const noSymtomFound = !results.rows.length;
     if (noSymtomFound) {
-      res.send("Symtom does not exist");
+      res.json({ msg: "Symtom does not exist" });
     } else {
       // remove process
       pool.query(queries.removeSymtom, [id], (error, results) => {
         if (error) throw error;
-        res.status(200).send("Symtom remove successfully.");
+        res.status(200).json({ msg: "Symtom remove successfully." });
       });
     }
   });

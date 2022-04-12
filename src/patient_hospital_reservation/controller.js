@@ -24,7 +24,7 @@ const addPHR = (req, res) => {
     [patient_id, hospital_id, reservation_id],
     (error, results) => {
       if (error) throw error;
-      res.status(201).send("PHR created successfully.");
+      res.status(201).json({ msg: "PHR created successfully." });
     }
   );
 };
@@ -37,14 +37,14 @@ const updatePHR = (req, res) => {
   pool.query(queries.getPHRById, [id], (error, results) => {
     const noPHRFound = !results.rows.length;
     if (noPHRFound) {
-      res.send("PHR does not exist");
+      res.json({ msg: "PHR does not exist" });
     } else {
       pool.query(
         queries.updatePHR,
         [patient_id, hospital_id, reservation_id, id],
         (error, results) => {
           if (error) throw error;
-          res.status(200).send("PHR updated successfully.");
+          res.status(200).json({ msg: "PHR updated successfully." });
         }
       );
     }
@@ -58,12 +58,12 @@ const removePHR = (req, res) => {
   pool.query(queries.getPHRById, [id], (error, results) => {
     const noPHRFound = !results.rows.length;
     if (noPHRFound) {
-      res.send("PHR does not exist");
+      res.json({ msg: "PHR does not exist" });
     } else {
       // remove process
       pool.query(queries.removePHR, [id], (error, results) => {
         if (error) throw error;
-        res.status(200).send("PHR remove successfully.");
+        res.status(200).json({ msg: "PHR remove successfully." });
       });
     }
   });
