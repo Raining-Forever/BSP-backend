@@ -18,16 +18,8 @@ const getSymtomById = (req, res) => {
   });
 };
 
-// const getPatientById = (req, res, patient_id) => {
-//   // check patient exist or not
-//   pool.query(queries.getPatientById, [patient_id], (error, results) => {
-//     const patientNotFound = !results.rows.length;
-//     return patientNotFound;
-//   });
-// };
-
 // add
-const addSymtom = (req, res) => {
+const addSymtom = async (req, res) => {
   const {
     fever,
     cough,
@@ -67,69 +59,94 @@ const addSymtom = (req, res) => {
     pulse,
     o2_flowrate, //37
     patient_id,
+    result,
+    score,
   } = req.body;
   // const { patient_id, result } = req.body;
   // console.log(result);
 
-  // check symtom already created or not
-  pool.query(queries.getSymtomById, [patient_id], (error, results) => {
-    const symtomFound = results.rows.length;
-    if (symtomFound) {
+  const checkSymtomExist = await pool.query(queries.getSymtomById, [
+    patient_id,
+  ]);
+
+  const checkPatientExist = await pool.query(
+    "select * from patients where id = $1",
+    [patient_id]
+  );
+  if (checkPatientExist.rowCount === 0) {
+    res.json({
+      msg: "Patient not exist",
+    });
+  } else {
+    if (checkSymtomExist.rowCount > 0) {
       res.json({ msg: "Symtom already exist" });
     } else {
-      pool.query(
-        queries.addSymtom,
-        [
-          fever,
-          cough,
-          snot,
-          sore_throat,
-          smell, //5
-          taste,
-          conjunctivitis,
-          rash,
-          liquid_stool,
-          liquid_stool_frequenly, //10
-          angina,
-          tired,
-          dizzy,
-          pneumonia,
-          complication, //15
-          sore_breath,
-          slow_response,
-          unconscious,
-          onset_date,
-          diabetes_obesity, //20
-          complications,
-          cardiovascular,
-          heart_failure,
-          lung_disease,
-          asthma, //25
-          chronic_lung,
-          malignant_tumors,
-          cancer,
-          chronic_kidney,
-          ckd34, //30
-          kidney_failure_transplant,
-          rheumatoid_arthritis,
-          immunosuppressants,
-          chronic_liver,
-          respire_rate, //35
-          pulse,
-          o2_flowrate, //37
-          patient_id,
-        ],
-        (error, results) => {
-          if (error) throw error;
-          res.status(201).json({ msg: "Symtom created successfully." });
-        }
+      const addSymtom = await pool.query(
+        `INSERT INTO symtom (score, patient_id) values ($1, $2) returning *`,
+        [score, patient_id]
       );
+      res.json({ msg: "Symtom created", symtom: addSymtom.rows[0] });
     }
-  });
+  }
+  // check symtom already created or not
+  // pool.query(queries.getSymtomById, [patient_id], (error, results) => {
+  //   const symtomFound = results.rows.length;
+  //   if (symtomFound) {
+  //     res.json({ msg: "Symtom already exist" });
+  //   } else {
+  //     pool.query(
+  //       queries.addSymtom,
+  //       [
+  //         fever,
+  //         cough,
+  //         snot,
+  //         sore_throat,
+  //         smell, //5
+  //         taste,
+  //         conjunctivitis,
+  //         rash,
+  //         liquid_stool,
+  //         liquid_stool_frequenly, //10
+  //         angina,
+  //         tired,
+  //         dizzy,
+  //         pneumonia,
+  //         complication, //15
+  //         sore_breath,
+  //         slow_response,
+  //         unconscious,
+  //         onset_date,
+  //         diabetes_obesity, //20
+  //         complications,
+  //         cardiovascular,
+  //         heart_failure,
+  //         lung_disease,
+  //         asthma, //25
+  //         chronic_lung,
+  //         malignant_tumors,
+  //         cancer,
+  //         chronic_kidney,
+  //         ckd34, //30
+  //         kidney_failure_transplant,
+  //         rheumatoid_arthritis,
+  //         immunosuppressants,
+  //         chronic_liver,
+  //         respire_rate, //35
+  //         pulse,
+  //         o2_flowrate, //37
+  //         patient_id,
+  //       ],
+  //       (error, results) => {
+  //         if (error) throw error;
+  //         res.status(201).json({ msg: "Symtom created successfully." });
+  //       }
+  //     );
+  //   }
+  // });
 };
 
 // update
-const updateSymtom = (req, res) => {
+const updateSymtom = async (req, res) => {
   const id = parseInt(req.params.id);
   const {
     fever,
@@ -169,65 +186,30 @@ const updateSymtom = (req, res) => {
     respire_rate,
     pulse,
     o2_flowrate,
+    score,
+    patient_id,
   } = req.body;
 
-  // check symtom exist or not
-  pool.query(queries.getSymtomById, [id], (error, results) => {
-    const noSymtomFound = !results.rows.length;
-    if (noSymtomFound) {
-      res.json({ msg: "Symtom does not exist" });
-    }
-    //update process
-    else {
-      pool.query(
-        queries.updateSymtom,
-        [
-          fever,
-          cough,
-          snot,
-          sore_throat,
-          smell,
-          taste,
-          conjunctivitis,
-          rash,
-          liquid_stool,
-          liquid_stool_frequenly,
-          angina,
-          tired,
-          dizzy,
-          pneumonia,
-          complication,
-          sore_breath,
-          slow_response,
-          unconscious,
-          onset_date,
-          diabetes_obesity,
-          complications,
-          cardiovascular,
-          heart_failure,
-          lung_disease,
-          asthma,
-          chronic_lung,
-          malignant_tumors,
-          cancer,
-          chronic_kidney,
-          ckd34,
-          kidney_failure_transplant,
-          rheumatoid_arthritis,
-          immunosuppressants,
-          chronic_liver,
-          respire_rate,
-          pulse,
-          o2_flowrate,
-          id,
-        ],
-        (error, results) => {
-          if (error) throw error;
-          res.status(200).json({ msg: "Symtom updated successfully." });
-        }
+  const checkSymtomExist = await pool.query(queries.getSymtomById, [id]);
+  const checkPatientExist = await pool.query(
+    "select * from patients where id = $1",
+    [id]
+  );
+  if (checkPatientExist.rowCount === 0) {
+    res.json({ msg: "Patient not exist" });
+  } else {
+    if (checkSymtomExist.rowCount === 0) {
+      res.json({ msg: "Symtom of this patient_id not exist" });
+    } else {
+      const updatedSymtom = await pool.query(
+        "update symtom set score = $1 where patient_id = $2 returning *",
+        [score, id]
       );
+      res
+        .status(201)
+        .json({ msg: "Symtom updated", symtom: updatedSymtom.rows[0] });
     }
-  });
+  }
 };
 
 // delete
