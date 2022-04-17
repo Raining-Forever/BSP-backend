@@ -56,7 +56,9 @@ const addHospital = async (req, res) => {
       ]);
       res.status(201).json({
         msg: "Hospital created successfully.",
-        hospital: addedHospital.rows[0],
+        loggedIn: true,
+        role: "hospital",
+        user_info: addedHospital.rows[0],
       });
     }
   }
@@ -123,7 +125,9 @@ const updateHospital = async (req, res) => {
       ]);
       res.status(201).json({
         msg: "Hospital updated successfully.",
-        hospital: updatedHospital.rows[0],
+        loggedIn: true,
+        role: "hospital",
+        user_info: updatedHospital.rows[0],
       });
     }
   }

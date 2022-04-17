@@ -72,7 +72,9 @@ const addDoctor = async (req, res) => {
         ]);
         res.status(201).json({
           msg: "Doctor created successfully.",
-          doctor: addedDoctor.rows[0],
+          loggedIn: true,
+          role: "doctor",
+          user_info: addedDoctor.rows[0],
         });
       }
     }
@@ -148,7 +150,12 @@ const updateDoctor = async (req, res) => {
           ],
           (error, results) => {
             if (error) throw error;
-            res.status(200).json({ msg: "Doctor updated successfully." });
+            res.status(200).json({
+              msg: "Doctor updated successfully.",
+              loggedIn: true,
+              role: "doctor",
+              user_info: results.rows[0],
+            });
           }
         );
       }
