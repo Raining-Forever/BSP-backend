@@ -171,7 +171,14 @@ const updatePatient = (req, res) => {
         ],
         (error, results) => {
           if (error) throw error;
-          res.status(200).json({ msg: "Patient updated successfully." });
+          res.status(200).json({
+            msg: "Patient updated successfully.",
+            loggedIn: true,
+            email,
+            role: "patient",
+            user_id: results.rows[0].user_id,
+            user_info: results.rows[0],
+          });
         }
       );
     }
