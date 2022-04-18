@@ -37,8 +37,8 @@ const addPatient = async (req, res) => {
     address,
     province,
     district,
-    subDistrict,
-    postalCode, //20
+    subdistrict,
+    postalcode, //20
   } = req.body;
 
   //check user id
@@ -76,8 +76,8 @@ const addPatient = async (req, res) => {
           address,
           province,
           district,
-          subDistrict,
-          postalCode,
+          subdistrict,
+          postalcode,
         ],
         (error, results) => {
           if (error) throw error;
@@ -134,8 +134,8 @@ const updatePatient = (req, res) => {
     address,
     province,
     district,
-    subDistrict,
-    postalCode, //20
+    subdistrict,
+    postalcode, //20
   } = req.body;
 
   //check patient id exist for update or not
@@ -165,8 +165,8 @@ const updatePatient = (req, res) => {
           address,
           province,
           district,
-          subDistrict,
-          postalCode,
+          subdistrict,
+          postalcode,
           id,
         ],
         (error, results) => {
