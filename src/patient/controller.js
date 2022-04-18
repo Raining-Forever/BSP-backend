@@ -84,9 +84,9 @@ const addPatient = async (req, res) => {
           console.log(results.rows);
           res.status(201).json({
             loggedIn: true,
-            email,
+            email: email,
             role: "patient",
-            user_id: results.user_id,
+            user_id: results.rows[0].user_id,
             user_info: results.rows[0],
           });
         }
@@ -174,7 +174,7 @@ const updatePatient = (req, res) => {
           res.status(200).json({
             msg: "Patient updated successfully.",
             loggedIn: true,
-            email,
+            email: email,
             role: "patient",
             user_id: results.rows[0].user_id,
             user_info: results.rows[0],
