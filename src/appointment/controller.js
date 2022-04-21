@@ -9,7 +9,23 @@ const getAppointments = async (req, res) => {
       "select * from appointments where patient_id = $1 and doctor_id = $2",
       [patient_id, doctor_id]
     );
-    res.json(getAppoint.rows);
+    const doctorinfo = await pool.query("select * from doctors where id = $1", [
+      doctor_id,
+    ]);
+    let newArray = [];
+    // check doctorinfo
+    if (doctorinfo.rowCount > 0) {
+      newArray = getAppoint.rows.map((v) => ({
+        ...v,
+        doctorinfo: doctorinfo.rows[0],
+      }));
+    } else if (doctorinfo.rowCount === 0) {
+      newArray = getAppoint.rows.map((v) => ({
+        ...v,
+        doctorinfo: "none",
+      }));
+    }
+    res.json(newArray);
   } else if (patient_id) {
     const getAppoint = await pool.query(
       "select * from appointments where patient_id = $1",
@@ -21,7 +37,14 @@ const getAppointments = async (req, res) => {
       "select * from appointments where doctor_id = $1",
       [doctor_id]
     );
-    res.json(getAppoint.rows);
+    const doctorinfo = await pool.query("select * from doctors where id = $1", [
+      doctor_id,
+    ]);
+    const newArray = getAppoint.rows.map((v) => ({
+      ...v,
+      doctorinfo: doctorinfo.rows[0],
+    }));
+    res.json(newArray);
   } else
     pool.query(queries.getAppointments, (error, results) => {
       if (error) throw error;
