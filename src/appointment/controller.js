@@ -70,14 +70,29 @@ const getAppointments = async (req, res) => {
     resdata = docdata;
     // res.json(docdata);
   } else {
-    resdata = await pool.query(queries.getAppointments);
-    resdata = resdata.rows;
+    const queryArray = await pool.query(queries.getAppointments);
+    const aData = [];
+
+    for (const v of queryArray.rows) {
+      const doctorinfo = await pool.query(
+        "select * from doctors where id = $1",
+        [v.doctor_id]
+      );
+      aData.push({ ...v, doctorinfo: doctorinfo.rows[0] });
+    }
+
+    if (aData) {
+      let temp = [];
+      temp = aData.filter((v) => v.doctor_id);
+      resdata = temp.filter((v) => v.doctorinfo);
+    } else {
+      resdata = aData;
+    }
   }
 
   if (status) {
     resdata = resdata.filter((v) => v.status === status);
   }
-
   res.json(resdata);
 };
 
