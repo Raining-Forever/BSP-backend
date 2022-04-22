@@ -2,28 +2,9 @@ const pool = require("../../db");
 const queries = require("./queries");
 
 const getAppointments = async (req, res) => {
-  const { patient_id, doctor_id } = req.body;
+  const { patient_id, doctor_id, status } = req.body;
 
-  async function getDoctorInfo(id) {
-    const data = {
-      id: 8,
-      user_id: 15,
-      licensenumber: null,
-      email: "testCreateDoctor@gmail.com",
-      title: null,
-      firstname: "testCreateDoctor",
-      lastname: null,
-      birthday: null,
-      tel: null,
-      gender: null,
-      address: null,
-      province: null,
-      district: null,
-      subdistrict: null,
-      postalcode: null,
-    };
-    return data;
-  }
+  let resdata = [];
 
   let doctorinfo = {};
   if (doctor_id) {
@@ -37,20 +18,21 @@ const getAppointments = async (req, res) => {
       "select * from appointments where patient_id = $1 and doctor_id = $2",
       [patient_id, doctor_id]
     );
-    let data = [];
+    let newdata = [];
     // check doctorinfo
     if (doctorinfo.rowCount > 0) {
-      data = getAppoint.rows.map((v) => ({
+      newdata = getAppoint.rows.map((v) => ({
         ...v,
         doctorinfo: doctorinfo.rows[0],
       }));
     } else if (doctorinfo.rowCount === 0) {
-      data = getAppoint.rows.map((v) => ({
+      newdata = getAppoint.rows.map((v) => ({
         ...v,
         doctorinfo: "none",
       }));
     }
-    res.json(data);
+    resdata = newdata;
+    // res.json(newdata);
   } else if (patient_id) {
     const getAppoint = await pool.query(
       "select * from appointments where patient_id = $1",
@@ -65,31 +47,38 @@ const getAppointments = async (req, res) => {
       );
       ndata.push({ ...v, doctorinfo: doctorinfo.rows[0] || {} });
     }
-    res.json(ndata.filter((v) => v.doctor_id));
+    resdata = ndata.filter((v) => v.doctor_id);
+    // res.json(ndata.filter((v) => v.doctor_id));
   } else if (doctor_id) {
     const getAppoint = await pool.query(
       "select * from appointments where doctor_id = $1",
       [doctor_id]
     );
-    let data = [];
+    let docdata = [];
     // check doctorinfo
     if (doctorinfo.rowCount > 0) {
-      data = getAppoint.rows.map((v) => ({
+      docdata = getAppoint.rows.map((v) => ({
         ...v,
         doctorinfo: doctorinfo.rows[0],
       }));
     } else if (doctorinfo.rowCount === 0) {
-      data = getAppoint.rows.map((v) => ({
+      docdata = getAppoint.rows.map((v) => ({
         ...v,
         doctorinfo: "none",
       }));
     }
-    res.json(data);
-  } else
-    pool.query(queries.getAppointments, (error, results) => {
-      if (error) throw error;
-      res.status(200).json(results.rows);
-    });
+    resdata = docdata;
+    // res.json(docdata);
+  } else {
+    resdata = await pool.query(queries.getAppointments);
+    resdata = resdata.rows;
+  }
+
+  if (status) {
+    resdata = resdata.filter((v) => v.status === status);
+  }
+
+  res.json(resdata);
 };
 
 const getAppointmentById = async (req, res) => {
