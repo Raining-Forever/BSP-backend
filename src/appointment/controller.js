@@ -90,7 +90,31 @@ const getAppointmentById = async (req, res) => {
 };
 
 const addAppointment = async (req, res) => {
-  const { starttime, endtime, url, status, patient_id, doctor_id } = req.body;
+  const { appointdate, appointtimerange, url, status, patient_id, doctor_id } =
+    req.body;
+
+  //   {
+  //     "appointdate": "2022-04-13T11:53:39.750Z",
+  //     "appointtimerange": [
+  //         "2022-04-21T19:00:00.303Z",
+  //         "2022-04-21T19:30:00.341Z"
+  //     ]
+  // }
+
+  let data = [];
+  let starttime = "";
+  let endtime = "";
+
+  if (appointdate && appointtimerange) {
+    let adate = appointdate.split("T");
+    adate = adate[0];
+
+    let start = appointtimerange[0].split("T")[1];
+    let end = appointtimerange[1].split("T")[1];
+
+    starttime = adate + "T" + start;
+    endtime = adate + "T" + end;
+  }
 
   const added = await pool.query(queries.addAppointment, [
     starttime,
