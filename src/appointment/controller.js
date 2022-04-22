@@ -148,20 +148,78 @@ const addAppointment = async (req, res) => {
 const updateAppointment = async (req, res) => {
   const id = parseInt(req.params.id);
   const { starttime, endtime, url, status, patient_id, doctor_id } = req.body;
+  const eiei =
+    "update appointments set starttime = $1, endtime = $2, url = $3, status = $4, patient_id = $5, doctor_id = $6 where id = $7 returning *";
+  let queryString = "update appointments set ";
+  let number = 1;
+  let queryArray = [];
+  if (starttime || endtime || url || status || patient_id || doctor_id) {
+    if (starttime) {
+      if (number === 1) {
+        queryString += `starttime = $${number}`;
+      } else {
+        queryString += `, starttime = $${number}`;
+      }
+      queryArray.push(starttime);
+      number += 1;
+    }
+    if (endtime) {
+      if (number === 1) {
+        queryString += `endtime = $${number}`;
+      } else {
+        queryString += `, endtime = $${number}`;
+      }
+      queryArray.push(endtime);
+      number += 1;
+    }
+    if (url) {
+      if (number === 1) {
+        queryString += `url = $${number}`;
+      } else {
+        queryString += `, url = $${number}`;
+      }
+      queryArray.push(url);
+      number += 1;
+    }
+    if (status) {
+      if (number === 1) {
+        queryString += `status = $${number}`;
+      } else {
+        queryString += `, status = $${number}`;
+      }
+      queryArray.push(status);
+      number += 1;
+    }
+    if (patient_id) {
+      if (number === 1) {
+        queryString += `patient_id = $${number}`;
+      } else {
+        queryString += `, patient_id = $${number}`;
+      }
+      queryArray.push(patient_id);
+      number += 1;
+    }
+    if (doctor_id) {
+      if (number === 1) {
+        queryString += `doctor_id = $${number}`;
+      } else {
+        queryString += `, doctor_id = $${number}`;
+      }
+      queryArray.push(doctor_id);
+      number += 1;
+    }
+    queryString += ` where id = $${number} returning *`;
+    queryArray.push(id);
+  } else {
+    res.json({ msg: "nothing change" });
+  }
 
   const checkAppointExist = await pool.query(queries.getAppointmentById, [id]);
   if (checkAppointExist.rowCount === 0) {
     res.json({ msg: "Appointment not found" });
   } else {
-    const added = await pool.query(queries.updateAppointment, [
-      starttime,
-      endtime,
-      url,
-      status,
-      patient_id,
-      doctor_id,
-      id,
-    ]);
+    const added = await pool.query(queryString, queryArray);
+    console.log(added.rows);
     res.status(201).json({
       msg: "Appointment updated successfully.",
       appointment: added.rows[0],
