@@ -20,7 +20,7 @@ const getDoctorById = async (req, res) => {
 const addDoctor = async (req, res) => {
   const {
     user_id,
-    licenseNumber,
+    licensenumber,
     email,
     title,
     firstname,
@@ -56,7 +56,7 @@ const addDoctor = async (req, res) => {
       } else {
         const addedDoctor = await pool.query(queries.addDoctor, [
           user_id,
-          licenseNumber,
+          licensenumber,
           email,
           title,
           firstname,
@@ -104,7 +104,7 @@ const updateDoctor = async (req, res) => {
 
   const {
     user_id,
-    licenseNumber,
+    licensenumber,
     email,
     title,
     firstname,
@@ -133,7 +133,7 @@ const updateDoctor = async (req, res) => {
           queries.updateDoctor,
           [
             user_id,
-            licenseNumber,
+            licensenumber,
             email,
             title,
             firstname,
