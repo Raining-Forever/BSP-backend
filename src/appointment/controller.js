@@ -98,10 +98,30 @@ const getAppointments = async (req, res) => {
 
 const getAppointmentById = async (req, res) => {
   const id = parseInt(req.params.id);
-  pool.query(queries.getAppointmentById, [id], (error, results) => {
-    if (error) throw error;
-    res.status(200).json(results.rows);
-  });
+  const appoint = await pool.query(queries.getAppointmentById, [id]);
+  let response = [];
+  if (appoint.rowCount === 0) {
+    res.json({ msg: "No appoint found" });
+  } else {
+    const aData = [];
+    for (const v of appoint.rows) {
+      const doctorinfo = await pool.query(
+        "select * from doctors where id = $1",
+        [v.doctor_id]
+      );
+      aData.push({ ...v, doctorinfo: doctorinfo.rows[0] });
+    }
+
+    if (aData) {
+      let temp = [];
+      temp = aData.filter((v) => v.doctor_id);
+      response = temp.filter((v) => v.doctorinfo);
+    } else {
+      response = { msg: "no doctor in the appointment you requested" };
+    }
+
+    res.json(response);
+  }
 };
 
 const addAppointment = async (req, res) => {
