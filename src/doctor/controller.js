@@ -31,8 +31,8 @@ const addDoctor = async (req, res) => {
     address,
     province,
     district,
-    subDistrict,
-    postalCode,
+    subdistrict,
+    postalcode,
   } = req.body;
 
   // check user from user_id
@@ -67,8 +67,8 @@ const addDoctor = async (req, res) => {
           address,
           province,
           district,
-          subDistrict,
-          postalCode,
+          subdistrict,
+          postalcode,
         ]);
         res.status(201).json({
           msg: "Doctor created successfully.",
@@ -115,8 +115,8 @@ const updateDoctor = async (req, res) => {
     address,
     province,
     district,
-    subDistrict,
-    postalCode,
+    subdistrict,
+    postalcode,
   } = req.body;
 
   if (!user_id) {
@@ -144,8 +144,8 @@ const updateDoctor = async (req, res) => {
             address,
             province,
             district,
-            subDistrict,
-            postalCode,
+            subdistrict,
+            postalcode,
             id,
           ],
           (error, results) => {
