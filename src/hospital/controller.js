@@ -28,7 +28,7 @@ const addHospital = async (req, res) => {
     province,
     district,
     subdistrict,
-    postalCode,
+    postalcode,
   } = req.body;
 
   if (!user_id) {
@@ -52,7 +52,7 @@ const addHospital = async (req, res) => {
         province,
         district,
         subdistrict,
-        postalCode,
+        postalcode,
       ]);
       res.status(201).json({
         msg: "Hospital created successfully.",
@@ -96,7 +96,7 @@ const updateHospital = async (req, res) => {
     province,
     district,
     subdistrict,
-    postalCode,
+    postalcode,
   } = req.body;
 
   if (!user_id) {
@@ -120,7 +120,7 @@ const updateHospital = async (req, res) => {
         province,
         district,
         subdistrict,
-        postalCode,
+        postalcode,
         id,
       ]);
       res.status(201).json({

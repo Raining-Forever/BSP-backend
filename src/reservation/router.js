@@ -3,7 +3,7 @@ const controller = require("./controller");
 const { Router } = require("express");
 const router = Router();
 
-router.get("/", controller.getReservations);
+router.put("/", controller.getReservations);
 router.post("/", controller.addReservation);
 router.get("/:id", controller.getReservationById);
 router.put("/:id", controller.updateReservation);
