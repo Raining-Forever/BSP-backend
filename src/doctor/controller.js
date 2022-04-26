@@ -74,6 +74,8 @@ const addDoctor = async (req, res) => {
           msg: "Doctor created successfully.",
           loggedIn: true,
           role: "doctor",
+          email: email,
+          user_id: addedDoctor.rows[0].user_id,
           user_info: addedDoctor.rows[0],
         });
       }
@@ -154,6 +156,8 @@ const updateDoctor = async (req, res) => {
               msg: "Doctor updated successfully.",
               loggedIn: true,
               role: "doctor",
+              email: results.rows[0].email,
+              user_id: results.rows[0].user_id,
               user_info: results.rows[0],
             });
           }
