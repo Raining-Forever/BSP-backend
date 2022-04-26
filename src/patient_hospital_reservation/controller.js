@@ -34,8 +34,16 @@ const getPHRs = async (req, res) => {
       "select * from patients where id = $1",
       [v.patient_id]
     );
+    const hospitalData = await pool.query(
+      "select * from hospitals where id = $1",
+      [v.hospital_id]
+    );
     if (patientData.rowCount > 0)
-      temp.push({ ...v, patientinfo: patientData.rows[0] || {} });
+      temp.push({
+        ...v,
+        patientinfo: patientData.rows[0] || {},
+        hospitalinfo: hospitalData.rows[0] || {},
+      });
   }
   query = temp;
 
