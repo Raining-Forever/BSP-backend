@@ -2,34 +2,33 @@ const pool = require("../../db");
 const queries = require("./queries");
 
 const getPHRs = async (req, res) => {
-  const { patient_id, hospital_id, role } = req.body;
+  const { patient_id, hospital_id, status } = req.body;
 
-  if (role === "patient") {
-    if (!patient_id) {
-      res.json({ msg: "patient_id not found" });
-    } else {
-      const patientPHR = await pool.query(
-        "select * from patient_hospital_reservation where patient_id = $1",
-        [patient_id]
-      );
-      res.json(patientPHR.rows);
-    }
-  } else if (role === "hospital") {
-    if (!hospital_id) {
-      res.json({ msg: "hospital_id not found" });
-    } else {
-      const hospitalPHR = await pool.query(
-        "select * from patient_hospital_reservation where hospital_id = $1",
-        [hospital_id]
-      );
-      res.json(hospitalPHR.rows);
-    }
+  let query = [];
+  if (patient_id) {
+    const patientPHR = await pool.query(
+      "select * from patient_hospital_reservation where patient_id = $1",
+      [patient_id]
+    );
+    query = patientPHR.rows;
+  } else if (hospital_id) {
+    const hospitalPHR = await pool.query(
+      "select * from patient_hospital_reservation where hospital_id = $1",
+      [hospital_id]
+    );
+    query = hospitalPHR.rows;
   } else {
-    pool.query(queries.getPHRs, (error, results) => {
-      if (error) throw error;
-      res.status(200).json(results.rows);
-    });
+    const getAll = await pool.query(
+      "select * from patient_hospital_reservation"
+    );
+    query = getAll.rows;
   }
+
+  if (status) {
+    query = query.filter((v) => v.status === status);
+  }
+
+  res.json(query);
 };
 
 const getPHRById = async (req, res) => {
@@ -41,12 +40,13 @@ const getPHRById = async (req, res) => {
 };
 
 const addPHR = async (req, res) => {
-  const { patient_id, hospital_id, reservation_id } = req.body;
+  const { patient_id, hospital_id, reservation_id, status } = req.body;
 
   const added = await pool.query(queries.addPHR, [
     patient_id,
     hospital_id,
     reservation_id,
+    status,
   ]);
   res
     .status(201)
@@ -55,18 +55,59 @@ const addPHR = async (req, res) => {
 
 const updatePHR = async (req, res) => {
   const id = parseInt(req.params.id);
-  const { patient_id, hospital_id, reservation_id } = req.body;
+  const { patient_id, hospital_id, reservation_id, status } = req.body;
+
+  let queryString = "update patient_hospital_reservation set ";
+  let number = 1;
+  let queryArray = [];
+  if (patient_id || hospital_id || reservation_id || status) {
+    if (patient_id) {
+      if (number === 1) {
+        queryString += `patient_id = $${number}`;
+      } else {
+        queryString += `, patient_id = $${number}`;
+      }
+      queryArray.push(patient_id);
+      number += 1;
+    }
+    if (hospital_id) {
+      if (number === 1) {
+        queryString += `hospital_id = $${number}`;
+      } else {
+        queryString += `, hospital_id = $${number}`;
+      }
+      queryArray.push(hospital_id);
+      number += 1;
+    }
+    if (reservation_id) {
+      if (number === 1) {
+        queryString += `reservation_id = $${number}`;
+      } else {
+        queryString += `, reservation_id = $${number}`;
+      }
+      queryArray.push(reservation_id);
+      number += 1;
+    }
+    if (status) {
+      if (number === 1) {
+        queryString += `status = $${number}`;
+      } else {
+        queryString += `, status = $${number}`;
+      }
+      queryArray.push(status);
+      number += 1;
+    }
+    queryString += ` where id = $${number} returning *`;
+    queryArray.push(id);
+  } else {
+    res.json({ msg: "nothing change" });
+  }
 
   const checkPHR = await pool.query(queries.getPHRById, [id]);
   if (checkPHR.rowCount === 0) {
     res.json({ msg: "this phr_id not found" });
   } else {
-    const updated = await pool.query(queries.updatePHR, [
-      patient_id,
-      hospital_id,
-      reservation_id,
-      id,
-    ]);
+    const updated = await pool.query(queryString, queryArray);
     res
       .status(201)
       .json({ msg: "PHR updated successfully.", phr: updated.rows[0] });
