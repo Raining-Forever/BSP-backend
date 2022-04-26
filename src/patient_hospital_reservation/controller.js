@@ -28,6 +28,17 @@ const getPHRs = async (req, res) => {
     query = query.filter((v) => v.status === status);
   }
 
+  let temp = [];
+  for (const v of query) {
+    const patientData = await pool.query(
+      "select * from patients where id = $1",
+      [v.patient_id]
+    );
+    if (patientData.rowCount > 0)
+      temp.push({ ...v, patientinfo: patientData.rows[0] || {} });
+  }
+  query = temp;
+
   res.json(query);
 };
 
