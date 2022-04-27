@@ -50,9 +50,17 @@ const addPatient = async (req, res) => {
       "select email from patients where email = $1",
       [email]
     );
+    const checkUserExists = await pool.query(
+      "select email from users where id = $1",
+      [user_id]
+    );
     if (checkEmailExists.rowCount > 0) {
       res.json({
         msg: "Email already registered",
+      });
+    } else if (checkUserExists.rowCount === 0) {
+      res.json({
+        msg: "User not found",
       });
     } else
       await pool.query(
