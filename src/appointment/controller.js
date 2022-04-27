@@ -78,7 +78,15 @@ const getAppointments = async (req, res) => {
         "select * from doctors where id = $1",
         [v.doctor_id]
       );
-      aData.push({ ...v, doctorinfo: doctorinfo.rows[0] });
+      const patientinfo = await pool.query(
+        "select * from patients where id = $1",
+        [v.patient_id]
+      );
+      aData.push({
+        ...v,
+        doctorinfo: doctorinfo.rows[0],
+        patientinfo: patientinfo.rows[0] || {},
+      });
     }
 
     if (aData) {
