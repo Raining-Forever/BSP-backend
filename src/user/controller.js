@@ -32,6 +32,7 @@ const login = async (req, res) => {
       role: "none",
       user_id: addNewUser.rows[0].id,
       user_info: "none",
+      is_admin: addNewUser.rows[0].is_admin,
     });
   }
   // already exist >> login
@@ -49,6 +50,7 @@ const login = async (req, res) => {
         user_id: existUser.rows[0].id,
         role: "patient",
         user_info: patient.rows[0],
+        is_admin: existUser.rows[0].is_admin,
       });
     }
     // if not patient
@@ -65,6 +67,7 @@ const login = async (req, res) => {
           user_id: existUser.rows[0].id,
           role: "doctor",
           user_info: doctor.rows[0],
+          is_admin: existUser.rows[0].is_admin,
         });
       }
       // check for hospital
@@ -80,6 +83,7 @@ const login = async (req, res) => {
             user_id: existUser.rows[0].id,
             role: "hospital",
             user_info: hospital.rows[0],
+            is_admin: existUser.rows[0].is_admin,
           });
         }
         // not all of above >> not register yet
@@ -90,6 +94,7 @@ const login = async (req, res) => {
             user_id: existUser.rows[0].id,
             role: "none",
             user_info: "none",
+            is_admin: existUser.rows[0].is_admin,
           });
         }
       }
