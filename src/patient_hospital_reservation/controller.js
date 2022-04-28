@@ -74,7 +74,14 @@ const addPHR = async (req, res) => {
 
 const updatePHR = async (req, res) => {
   const id = parseInt(req.params.id);
-  const { patient_id, hospital_id, reservation_id, status } = req.body;
+  const {
+    patient_id,
+    hospital_id,
+    reservation_id,
+    status,
+    checkin_date,
+    checkin_time,
+  } = req.body;
 
   let queryString = "update patient_hospital_reservation set ";
   let number = 1;
@@ -114,6 +121,21 @@ const updatePHR = async (req, res) => {
         queryString += `, status = $${number}`;
       }
       queryArray.push(status);
+      number += 1;
+    }
+    if (checkin_date && checkin_time) {
+      let date = "";
+      let time = "";
+      let checkin = "";
+      date = checkin_date.split("T")[0];
+      time = checkin_time.split("T")[1];
+      checkin = date + "T" + time;
+      if (number === 1) {
+        queryString += `checkin = $${number}`;
+      } else {
+        queryString += `, checkin = $${number}`;
+      }
+      queryArray.push(checkin);
       number += 1;
     }
     queryString += ` where id = $${number} returning *`;
