@@ -135,6 +135,7 @@ const updatePHR = async (req, res) => {
       } else {
         queryString += `, checkin = $${number}`;
       }
+      console.log(checkin);
       queryArray.push(checkin);
       number += 1;
     }
