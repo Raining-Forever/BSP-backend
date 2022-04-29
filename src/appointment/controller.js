@@ -1,5 +1,8 @@
 const pool = require("../../db");
 const queries = require("./queries");
+const fs = require("fs");
+const readline = require("readline");
+const { google } = require("googleapis");
 
 const getAppointments = async (req, res) => {
   const { patient_id, doctor_id, status } = req.body;
@@ -144,7 +147,6 @@ const addAppointment = async (req, res) => {
   //     ]
   // }
 
-  let data = [];
   let starttime = "";
   let endtime = "";
 
@@ -176,8 +178,6 @@ const addAppointment = async (req, res) => {
 const updateAppointment = async (req, res) => {
   const id = parseInt(req.params.id);
   const { starttime, endtime, url, status, patient_id, doctor_id } = req.body;
-  const eiei =
-    "update appointments set starttime = $1, endtime = $2, url = $3, status = $4, patient_id = $5, doctor_id = $6 where id = $7 returning *";
   let queryString = "update appointments set ";
   let number = 1;
   let queryArray = [];
@@ -246,12 +246,94 @@ const updateAppointment = async (req, res) => {
   if (checkAppointExist.rowCount === 0) {
     res.json({ msg: "Appointment not found" });
   } else {
-    const added = await pool.query(queryString, queryArray);
-    console.log(added.rows);
-    res.status(201).json({
-      msg: "Appointment updated successfully.",
-      appointment: added.rows[0],
-    });
+    if (checkAppointExist.rows[0].status === 1 && status === 2) {
+      const patientEmail = await pool.query(
+        "select email from patients where id = $1",
+        [patient_id]
+      );
+      const doctorEmail = await pool.query(
+        "select email from doctors where id = $1",
+        [doctor_id]
+      );
+      const attendeesEmails = [
+        { email: patientEmail.rows[0].email },
+        { email: doctorEmail.rows[0].email },
+      ];
+      let start_string = new Date(starttime).toLocaleString("en-US", {
+        timeZone: "Asia/Bangkok",
+      });
+      let end_string = new Date(endtime).toLocaleString("en-US", {
+        timeZone: "Asia/Bangkok",
+      });
+      let date_start = new Date(start_string);
+      let date_end = new Date(end_string);
+      const event = {
+        summary: "Coding class",
+        location: "Virtual / Google Meet",
+        description: "Learn how to code with Javascript",
+        start: {
+          dateTime: date_start,
+          timeZone: "Asia/Bangkok",
+        },
+        end: {
+          dateTime: date_end,
+          timeZone: "Asia/Bangkok",
+        },
+        attendees: attendeesEmails,
+        reminders: {
+          useDefault: false,
+          overrides: [
+            { method: "email", minutes: 24 * 60 },
+            { method: "popup", minutes: 10 },
+          ],
+        },
+        conferenceData: {
+          createRequest: {
+            conferenceSolutionKey: {
+              type: "hangoutsMeet",
+            },
+            requestId: "coding-calendar-demo",
+          },
+        },
+      };
+      /**
+       * Lists the next 10 events on the user's primary calendar.
+       * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
+       */
+      const calendar = google.calendar({ version: "v3", auth });
+      const response = await calendar.events.insert({
+        calendarId: "primary",
+        resource: event,
+        conferenceDataVersion: 1,
+      });
+
+      const {
+        config: {
+          data: { summary, location, start, end, attendees },
+        },
+        data: { conferenceData },
+      } = response;
+
+      // Get the Google Meet conference URL in order to join the call
+      const { uri } = conferenceData.entryPoints[0];
+      console.log(
+        `📅 Calendar event created: ${summary} at ${location}, from ${
+          start.dateTime
+        } to ${end.dateTime}, attendees:\n${attendees
+          .map((person) => `🧍 ${person.email}`)
+          .join("\n")} \n 💻 Join conference call link: ${uri}`
+      );
+
+      console.log(date_start, date_end);
+      res.json(patientEmail.rows[0].email);
+    }
+
+    // const added = await pool.query(queryString, queryArray);
+    // console.log(added.rows);
+    // res.status(201).json({
+    //   msg: "Appointment updated successfully.",
+    //   appointment: added.rows[0],
+    // });
   }
 };
 
